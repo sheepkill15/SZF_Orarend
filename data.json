@@ -1,0 +1,120 @@
+[
+    {
+        "name": "Korszerű adatbázisok",
+        "teacher": "Gombos Gergő",
+        "type": "lecture",
+        "start_time": "17:30",
+        "end_time": "19:20",
+        "day": "Monday",
+        "join_link": "https://meet.google.com/mme-ehed-tzk",
+        "week": "both",
+        "held": "online",
+        "homework": "https://mooc.elte.hu/courses/2427"
+    },
+    {
+        "name": "Korszerű adatbázisok",
+        "teacher": "Gombos Gergő",
+        "type": "lab",
+        "start_time": "19:30",
+        "end_time": "21:00",
+        "day": "Monday",
+        "join_link": "https://meet.google.com/mme-ehed-tzk",
+        "week": "both",
+        "held": "online"
+    },
+    {
+        "name": "Elosztott alkalmazások",
+        "teacher": "Kitlei Róbert László",
+        "type": "lecture",
+        "start_time": "17:00",
+        "end_time": "18:20",
+        "day": "Tuesday",
+        "join_link": "https://teams.microsoft.com/dl/launcher/launcher.html?url=%2F_%23%2Fl%2Fmeetup-join%2F19%3Ac0b82dc4a0f54e81bc8e7498362c5c40%40thread.tacv2%2F1757282564320%3Fcontext%3D%257b%2522Tid%2522%253a%25220133bb48-f790-4560-a64d-ac46a472fbbc%2522%252c%2522Oid%2522%253a%25226859aea9-0f8b-4c9e-84ea-46ce7f2f331a%2522%257d%26anon%3Dtrue&type=meetup-join&deeplinkId=eff05dba-f733-45a1-aa7a-fba52bed45ab&directDl=true&msLaunch=true&enableMobilePage=true&suppressPrompt=true",
+        "week": "both",
+        "held": "online"
+    },
+    {
+        "name": "Elosztott alkalmazások",
+        "teacher": "Kitlei Róbert László",
+        "type": "lab",
+        "start_time": "18:30",
+        "end_time": "20:00",
+        "day": "Tuesday",
+        "join_link": "https://teams.microsoft.com/dl/launcher/launcher.html?url=%2F_%23%2Fl%2Fmeetup-join%2F19%3Ac0b82dc4a0f54e81bc8e7498362c5c40%40thread.tacv2%2F1757282564320%3Fcontext%3D%257b%2522Tid%2522%253a%25220133bb48-f790-4560-a64d-ac46a472fbbc%2522%252c%2522Oid%2522%253a%25226859aea9-0f8b-4c9e-84ea-46ce7f2f331a%2522%257d%26anon%3Dtrue&type=meetup-join&deeplinkId=eff05dba-f733-45a1-aa7a-fba52bed45ab&directDl=true&msLaunch=true&enableMobilePage=true&suppressPrompt=true",
+        "week": "both",
+        "held": "online"
+    },
+    {
+        "name": "A szoftverfejlesztés minőségi aspektusai",
+        "teacher": "Kiss Tibor",
+        "type": "lab",
+        "start_time": "18:20",
+        "end_time": "21:00",
+        "day": "Wednesday",
+        "room": "413",
+        "week": "even",
+        "held": "in-person"
+    },
+    {
+        "name": "Bigyóinformatika",
+        "teacher": "Szilágyi László",
+        "type": "lecture",
+        "start_time": "17:00",
+        "end_time": "18:20",
+        "day": "Thursday",
+        "week": "both",
+        "held": "online",
+        "join_link": "https://meet.google.com/ccp-emje-nvc",
+        "classroom": "l4jhvlvg"
+    },
+    {
+        "name": "Bigyóinformatika",
+        "teacher": "Szilágyi László",
+        "type": "lab",
+        "start_time": "18:30",
+        "end_time": "20:00",
+        "day": "Thursday",
+        "week": "both",
+        "held": "online",
+        "join_link": "https://meet.google.com/ccp-emje-nvc",
+        "homework": "https://classroom.google.com/u/4/w/NzgwNTk3NzI1MjE0/t/all",
+        "classroom": "l4jhvlvg"
+    },
+    {
+        "name": "Párhuzamos és konkurens programozás",
+        "teacher": "Iclanzad Dávid Andrei",
+        "type": "lecture",
+        "start_time": "16:30",
+        "end_time": "18:20",
+        "day": "Friday",
+        "week": "odd",
+        "held": "in-person",
+        "room": "413",
+        "homework": "https://classroom.google.com/u/4/w/ODE0NjI3NDgwOTIy/t/all",
+        "classroom": "jwa54ir2"
+    },
+    {
+        "name": "Párhuzamos és konkurens programozás",
+        "teacher": "Iclanzad Dávid Andrei",
+        "type": "lab",
+        "start_time": "18:30",
+        "end_time": "20:20",
+        "day": "Friday",
+        "week": "odd",
+        "held": "in-person",
+        "room": "413",
+        "homework": "https://classroom.google.com/u/4/w/ODE0NjI3NDgwOTIy/t/all",
+        "classroom": "jwa54ir2"
+    },
+    {
+        "name": "Elosztott alkalmazások",
+        "teacher": "Kovács Attila",
+        "type": "lecture",
+        "start_time": "16:30",
+        "end_time": "18:20",
+        "day": "Friday",
+        "week": "even",
+        "held": "online",
+        "join_link": "https://meet.google.com/kim-bvbs-jpi"
+    }
+]
