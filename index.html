@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Egyetemi Órarend</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .timetable-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #f9fafb;
+            table-layout: fixed;
+            min-width: 800px;
+        }
+        
+        .timetable-table th,
+        .timetable-table td {
+            border: 1px solid #d1d5db;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        .timetable-table th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+            font-size: 0.875rem;
+            width: 100px;
+        }
+        
+        .timetable-table td {
+            background-color: #f9fafb;
+            font-size: 0.75rem;
+            font-weight: 500;
+            height: 140px;
+            width: 100px;
+        }
+        
+        .day-header {
+            background-color: #f3f4f6;
+            font-weight: 600;
+            font-size: 0.875rem;
+            width: 120px;
+        }
+        
+        .class-block {
+            position: absolute;
+            background-color: #1e40af;
+            border: 1px solid #1d4ed8;
+            border-radius: 4px;
+            margin: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+        
+        .class-block.odd-week {
+            top: 4px;
+            height: 66px;
+        }
+        
+        .class-block.even-week {
+            top: 74px;
+            height: 66px;
+        }
+        
+        .class-block.both-week {
+            top: 4px;
+            height: 132px;
+        }
+        
+        .class-block:hover {
+            background-color: #1d4ed8;
+            transform: scale(1.02);
+            z-index: 10;
+        }
+        
+        .class-block.lecture {
+            background-color: #047857;
+            border-color: #065f46;
+        }
+        
+        .class-block.lecture:hover {
+            background-color: #065f46;
+        }
+        
+        .class-block.lab {
+            background-color: #d97706;
+            border-color: #b45309;
+        }
+        
+        .class-block.lab:hover {
+            background-color: #b45309;
+        }
+        
+        .class-content {
+            padding: 4px;
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1.2;
+            height: 100%;
+            text-align: left;
+            position: relative;
+        }
+        
+        .class-name {
+            font-weight: 700;
+            font-size: 0.7rem;
+            line-height: 1.1;
+            color: #ffffff;
+        }
+        
+        .teacher-initials {
+            font-size: 0.6rem;
+            opacity: 0.9;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        
+        
+        .class-status {
+            font-size: 0.5rem;
+            opacity: 0.9;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 1px 3px;
+            border-radius: 2px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        
+        .tooltip {
+            position: fixed;
+            background-color: #1f2937;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            z-index: 1000;
+            min-width: 250px;
+            max-width: 300px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+        }
+        
+        .tooltip.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .tooltip-link {
+            color: #60a5fa;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        
+        .tooltip-link:hover {
+            color: #93c5fd;
+        }
+        
+        .week-indicator {
+            background-color: rgba(255, 255, 255, 0.25);
+            padding: 1px 4px;
+            border-radius: 2px;
+            font-size: 0.625rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        
+        .class-block.current-week {
+            opacity: 1;
+        }
+        
+        .class-block:not(.current-week) {
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Egyetemi Órarend</h1>
+        
+        <!-- Week Tracker -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-center">
+            <div class="text-lg font-semibold text-blue-800" id="week-indicator">
+                <!-- Week indicator will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6 overflow-x-auto">
+            <table class="timetable-table" id="timetable-table">
+                <!-- Table content will be generated by JavaScript -->
+            </table>
+        </div>
+        
+        <div class="mt-6 flex justify-center space-x-4">
+            <div class="flex items-center space-x-2">
+                <div class="w-4 h-4 bg-green-500 rounded"></div>
+                <span class="text-sm text-gray-600">Előadás</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="w-4 h-4 bg-amber-500 rounded"></div>
+                <span class="text-sm text-gray-600">Labor</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="w-4 h-4 bg-blue-500 rounded"></div>
+                <span class="text-sm text-gray-600">Egyéb</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let timetableData = [];
+        const days = ['Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek'];
+        const dayMapping = {
+            'Monday': 'Hétfő',
+            'Tuesday': 'Kedd', 
+            'Wednesday': 'Szerda',
+            'Thursday': 'Csütörtök',
+            'Friday': 'Péntek'
+        };
+        const typeMapping = {
+            'lecture': 'Előadás',
+            'lab': 'Labor'
+        };
+        let startHour = 8;
+        let endHour = 21;
+        let hours = [];
+        
+        // Week calculation starting from September 15, 2025
+        const firstWeekStart = new Date('2025-09-15');
+        
+        function getCurrentWeekType() {
+            const now = new Date();
+            const timeDiff = now.getTime() - firstWeekStart.getTime();
+            const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
+            const weekNumber = Math.floor(daysDiff / 7) + 1;
+            return {
+                weekNumber: weekNumber,
+                isOdd: weekNumber % 2 === 1,
+                weekType: weekNumber % 2 === 1 ? 'Páratlan' : 'Páros'
+            };
+        }
+        
+        function updateWeekIndicator() {
+            const weekInfo = getCurrentWeekType();
+            const indicator = document.getElementById('week-indicator');
+            if (indicator) {
+                indicator.innerHTML = `
+                    <div class="text-2xl font-bold">${weekInfo.weekType} hét</div>
+                    <div class="text-sm text-blue-600 mt-1">${weekInfo.weekNumber}. hét (kezdés: 2025. szeptember 15.)</div>
+                `;
+            }
+        }
+
+        function generateHours() {
+            hours = [];
+            for (let hour = startHour; hour < endHour; hour++) {
+                hours.push(`${hour.toString().padStart(2, '0')}:00 - ${hour.toString().padStart(2, '0')}:50`);
+            }
+        }
+
+        function timeToGridPosition(time) {
+            const [hours, minutes] = time.split(':').map(Number);
+            const hourIndex = hours - startHour;
+            const minuteOffset = minutes / 60;
+            return hourIndex + minuteOffset;
+        }
+
+        function createTooltipContent(classData) {
+            let content = `
+                <div class="font-semibold text-white mb-2">${classData.name}</div>
+                <div class="text-gray-300 text-sm mb-1"><strong>Oktató:</strong> ${classData.teacher}</div>
+                <div class="text-gray-300 text-sm mb-1"><strong>Típus:</strong> ${typeMapping[classData.type] || classData.type}</div>
+                <div class="text-gray-300 text-sm mb-1"><strong>Idő:</strong> ${classData.start_time} - ${classData.end_time}</div>
+                <div class="text-gray-300 text-sm mb-1"><strong>Helyszín:</strong> ${classData.held === 'online' ? 'Online' : `Terem ${classData.room || 'TBA'}`}</div>
+                <div class="text-gray-300 text-sm mb-1"><strong>Hét:</strong> ${classData.week === 'both' ? 'Minden héten' : classData.week === 'odd' ? 'Páratlan hetek' : 'Páros hetek'}</div>
+            `;
+            
+            if (classData.join_link) {
+                content += `<div class="text-gray-300 text-sm mb-1"><strong>Csatlakozási link:</strong> <a href="${classData.join_link}" target="_blank" class="tooltip-link">Kattints a csatlakozáshoz</a></div>`;
+            }
+            
+            if (classData.homework) {
+                content += `<div class="text-gray-300 text-sm mb-1"><strong>Házi feladat:</strong> <a href="${classData.homework}" target="_blank" class="tooltip-link">Feladatok megtekintése</a></div>`;
+            }
+            
+            if (classData.classroom) {
+                content += `<div class="text-gray-300 text-sm mb-1"><strong>Classroom:</strong> ${classData.classroom}</div>`;
+            }
+            
+            return content;
+        }
+
+        function createTimetable() {
+            const table = document.getElementById('timetable-table');
+            table.innerHTML = '';
+            
+            // Create header row
+            const headerRow = document.createElement('tr');
+            
+            // Empty cell for top-left corner
+            const emptyCell = document.createElement('th');
+            emptyCell.className = 'day-header';
+            headerRow.appendChild(emptyCell);
+            
+            // Hour headers
+            hours.forEach(hour => {
+                const hourHeader = document.createElement('th');
+                hourHeader.textContent = hour;
+                hourHeader.style.width = '100px';
+                headerRow.appendChild(hourHeader);
+            });
+            
+            table.appendChild(headerRow);
+            
+            // Create day rows
+            days.forEach((day, dayIndex) => {
+                const row = document.createElement('tr');
+                
+                // Day label
+                const dayCell = document.createElement('td');
+                dayCell.className = 'day-header';
+                dayCell.textContent = day;
+                row.appendChild(dayCell);
+                
+                // Hour cells for this day
+                hours.forEach((hour, hourIndex) => {
+                    const cell = document.createElement('td');
+                    cell.id = `${day}-${hourIndex}`;
+                    cell.style.width = '100px';
+                    row.appendChild(cell);
+                });
+                
+                table.appendChild(row);
+            });
+            
+            // Place classes on the table
+            timetableData.forEach(classData => {
+                const dayIndex = days.indexOf(dayMapping[classData.day]);
+                if (dayIndex === -1) return;
+                
+                const startPosition = timeToGridPosition(classData.start_time);
+                const endPosition = timeToGridPosition(classData.end_time);
+                const startHourIndex = Math.floor(startPosition);
+                const endHourIndex = Math.floor(endPosition);
+                
+                // Find the target cell
+                const targetCell = document.getElementById(`${dayMapping[classData.day]}-${startHourIndex}`);
+                if (!targetCell) return;
+                
+                // Calculate exact positioning within the hour
+                const startMinuteOffset = (startPosition - startHourIndex) * 60; // minutes within the hour
+                const duration = endPosition - startPosition;
+                
+                // Get actual cell width
+                const cellWidth = targetCell.offsetWidth;
+                const pixelsPerHour = cellWidth;
+                const pixelsPerMinute = pixelsPerHour / 60;
+                
+                // Create class block
+                const classBlock = document.createElement('div');
+                const weekInfo = getCurrentWeekType();
+                let blockClasses = `class-block ${classData.type} ${classData.week}-week`;
+                
+                // Highlight current week classes
+                if (classData.week === 'both' || 
+                    (classData.week === 'odd' && weekInfo.isOdd) || 
+                    (classData.week === 'even' && !weekInfo.isOdd)) {
+                    blockClasses += ' current-week';
+                }
+                
+                classBlock.className = blockClasses;
+                classBlock.style.left = `${startMinuteOffset * pixelsPerMinute + 1}px`; // pixels per minute, plus 1px margin
+                classBlock.style.width = `${duration * pixelsPerHour - 4}px`; // exact width based on duration, minus 4px for margins
+                classBlock.style.zIndex = '5';
+                
+                
+                const classContent = document.createElement('div');
+                classContent.className = 'class-content w-full';
+                
+                // Get teacher initials
+                const teacherInitials = classData.teacher.split(' ').map(name => name.charAt(0)).join('');
+                
+                // Get status text in Hungarian
+                const statusText = classData.held === 'online' ? 'Online' : 'Személyes';
+                
+                classContent.innerHTML = `
+                    <div class="flex justify-between flex-col gap-2 h-full w-full">
+                        <div class="flex flex-row justify-between w-full gap-2 items-start">
+                            <div class="class-name">${classData.name}</div>
+                            <div class="week-indicator">${classData.week === 'both' ? 'Minden' : classData.week === 'odd' ? 'Páratlan' : 'Páros'}</div>
+                        </div>
+                        <div class="flex flex-row justify-between gap-2 items-center">
+                            <div class="teacher-initials">${teacherInitials}</div>
+                            <div class="class-status">${statusText}</div>
+                        </div>
+                    </div>
+                `;
+                classBlock.appendChild(classContent);
+                
+                // Create tooltip and append to body to avoid overflow issues
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.innerHTML = createTooltipContent(classData);
+                document.body.appendChild(tooltip);
+                
+                // Position tooltip on hover
+                classBlock.addEventListener('mouseenter', (e) => {
+                    const rect = classBlock.getBoundingClientRect();
+                    const tooltipHeight = 200; // Approximate tooltip height
+                    const spaceAbove = rect.top;
+                    const spaceBelow = window.innerHeight - rect.bottom;
+                    
+                    let left = rect.left + (rect.width / 2);
+                    let top;
+                    
+                    // Choose position based on available space
+                    if (spaceAbove > spaceBelow && spaceAbove > tooltipHeight) {
+                        // Position above
+                        top = rect.top;
+                        tooltip.style.transform = 'translateX(-50%) translateY(-100%)';
+                    } else {
+                        // Position below
+                        top = rect.bottom;
+                        tooltip.style.transform = 'translateX(-50%)';
+                    }
+                    
+                    // Adjust if tooltip would go off screen horizontally
+                    if (left < 150) left = 150;
+                    if (left > window.innerWidth - 150) left = window.innerWidth - 150;
+                    
+                    tooltip.style.left = `${left}px`;
+                    tooltip.style.top = `${top}px`;
+                    tooltip.classList.add('show');
+                });
+                
+                // Keep tooltip visible when hovering over it
+                tooltip.addEventListener('mouseenter', (e) => {
+                    tooltip.classList.add('show');
+                });
+                
+                // Hide tooltip when leaving either the class block or the tooltip
+                classBlock.addEventListener('mouseleave', (e) => {
+                    // Small delay to allow moving to tooltip
+                    setTimeout(() => {
+                        if (!tooltip.matches(':hover')) {
+                            tooltip.classList.remove('show');
+                        }
+                    }, 100);
+                });
+                
+                tooltip.addEventListener('mouseleave', (e) => {
+                    tooltip.classList.remove('show');
+                });
+                
+                // Make the target cell relative positioned
+                targetCell.style.position = 'relative';
+                targetCell.appendChild(classBlock);
+            });
+        }
+
+        // Load data from JSON file
+        async function loadTimetableData() {
+            try {
+                const response = await fetch('./data.json');
+                timetableData = await response.json();
+                
+                // Calculate start and end hours based on actual class times
+                if (timetableData.length > 0) {
+                    const allTimes = [];
+                    timetableData.forEach(classData => {
+                        allTimes.push(classData.start_time, classData.end_time);
+                    });
+                    
+                    const earliestTime = Math.min(...allTimes.map(time => {
+                        const [hours, minutes] = time.split(':').map(Number);
+                        return hours + minutes / 60;
+                    }));
+                    
+                    const latestTime = Math.max(...allTimes.map(time => {
+                        const [hours, minutes] = time.split(':').map(Number);
+                        return hours + minutes / 60;
+                    }));
+                    
+                    // Round down to the nearest hour for start, round up for end
+                    startHour = Math.floor(earliestTime);
+                    endHour = Math.ceil(latestTime) + 1; // Add 1 hour buffer
+                    
+                    // Ensure minimum range of 3 hours
+                    if (endHour - startHour < 3) {
+                        endHour = startHour + 3;
+                    }
+                }
+                
+                generateHours();
+                updateWeekIndicator();
+                createTimetable();
+            } catch (error) {
+                console.error('Error loading timetable data:', error);
+                document.getElementById('timetable-grid').innerHTML = '<div class="col-span-full text-center text-red-500 p-4">Hiba az órarend betöltésekor</div>';
+            }
+        }
+
+        // Handle window resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (timetableData.length > 0) {
+                    createTimetable();
+                }
+            }, 100);
+        });
+
+        // Initialize the timetable when page loads
+        document.addEventListener('DOMContentLoaded', loadTimetableData);
+    </script>
+</body>
+</html>
